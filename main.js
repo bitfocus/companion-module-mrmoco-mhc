@@ -56,6 +56,32 @@ class ModuleInstance extends InstanceBase {
 		}
 	}
 
+	async postCam(self, str) {
+		const { default: got } = await import('got');
+		if (str) {
+
+			const url = `https://${self.config.httpHost}:${self.config.httpPort}${str}`
+
+			if (self.config.debug) {
+				self.log('debug', `Sending : ${url}`)
+			}
+
+			try {
+				const response = await got.post(
+					url,
+					{
+						username:self.config.username,
+						password:self.config.password,
+						https: { rejectUnauthorized: false }
+					}
+				)
+				console.log("Result from REST:" + str);
+			} catch (err) {
+				throw new Error(`Action failed err: ${err}`)
+			}
+		}
+	}
+
 	async getRobotList(self) {
 		const { default: got } = await import('got');
 		try {
