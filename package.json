@@ -12,7 +12,8 @@
 		"url": "git+https://github.com/bitfocus/companion-module-your-module-name.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.7.0"
+		"@companion-module/base": "~1.7.0",
+		"got": "13"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.4.2"
