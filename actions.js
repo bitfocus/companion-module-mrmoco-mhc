@@ -23,7 +23,7 @@ module.exports = function (self) {
 			],
 			callback: async (event) => {
 				const url = `/v1/robots/${event.options.robot}/preset/${event.options.num}`
-				self.sendCam(self, url)
+				self.sendCam(url)
 			},
 		},
 		recall_move: {
@@ -48,14 +48,24 @@ module.exports = function (self) {
 			],
 			callback: async (event) => {
 				const url = `/v1/robots/${event.options.robot}/moves/${event.options.num}/begin`
-				self.postCam(self, url)
+				self.sendCam(url, 'POST')
 			},
-		},		
+		},
 		stop_all: {
 			name: 'Stop All',
 			callback: async (event) => {
-				self.sendCam(self, '/v1/robots/stop')
+				self.sendCam('/v1/robots/stop')
 			},
+		},
+		set_move_option: {
+			name: 'Set Move Option',
+			callback: async (event) => {
+				const url = `/v1/robots/0/moves/settings`
+				options = {
+					oneClickStart: true
+				}
+				self.sendCam(url, 'PATCH', options)
+			}
 		}
 	})
 }
