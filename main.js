@@ -6,7 +6,7 @@ const UpdateActions = require('./actions')
 // const UpdateVariableDefinitions = require('./variables')
 
 
-class ModuleInstance extends InstanceBase {
+class MHCServerModuleInstance extends InstanceBase {
 
 	constructor(internal) {
 		super(internal)
@@ -111,4 +111,4 @@ class ModuleInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(ModuleInstance, UpgradeScripts)
+runEntrypoint(MHCServerModuleInstance, UpgradeScripts)
