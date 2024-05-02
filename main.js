@@ -102,13 +102,13 @@ class MHCServerModuleInstance extends InstanceBase {
 		UpdateActions(this)
 	}
 
-	updateFeedbacks() {
-		UpdateFeedbacks(this)
-	}
+	// updateFeedbacks() {
+	// 	UpdateFeedbacks(this)
+	// }
 
-	updateVariableDefinitions() {
-		UpdateVariableDefinitions(this)
-	}
+	// updateVariableDefinitions() {
+	// 	UpdateVariableDefinitions(this)
+	// }
 }
 
 runEntrypoint(MHCServerModuleInstance, UpgradeScripts)
