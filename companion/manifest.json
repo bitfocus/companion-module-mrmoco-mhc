@@ -1,16 +1,16 @@
 {
-	"id": "your-module-name",
-	"name": "your-module-name",
-	"shortname": "module-shortname",
-	"description": "A short one line description of your module",
+	"id": "companion-module-mrmoco-mhc",
+	"name": "companion-module-mrmoco-mhc",
+	"shortname": "MHC",
+	"description": "Companion module for MHC compatible devices",
 	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-your-module-name.git",
-	"bugs": "https://github.com/bitfocus/companion-module-your-module-name/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-mrmoco-mhc.git",
+	"bugs": "https://github.com/bitfocus/companion-module-mrmoco-mhc/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Mihindu Paul",
+			"email": "mihindu.paul@mrmoco.com"
 		}
 	],
 	"runtime": {
@@ -20,7 +20,7 @@
 		"entrypoint": "../main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
-	"keywords": []
+	"manufacturer": "Mark Roberts Motion Control",
+	"products": ["MHC"],
+	"keywords": ["MRMC", "Robotics", "Polymotion"]
 }
