@@ -1,6 +1,6 @@
 {
-	"id": "companion-module-mrmoco-mhc",
-	"name": "companion-module-mrmoco-mhc",
+	"id": "mrmoco-mhc",
+	"name": "mrmoco-mhc",
 	"shortname": "MHC",
 	"description": "Companion module for MHC compatible devices",
 	"version": "0.0.0",
@@ -19,7 +19,7 @@
 		"apiVersion": "0.0.0",
 		"entrypoint": "../main.js"
 	},
-	"legacyIds": [],
+	"legacyIds": ["companion-module-mrmoco-mhc"],
 	"manufacturer": "Mark Roberts Motion Control",
 	"products": ["MHC"],
 	"keywords": ["MRMC", "Robotics", "Polymotion"]
