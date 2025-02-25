@@ -1,6 +1,17 @@
+const { Regex } = require("@companion-module/base")
 const { flat } = require("./upgrades")
 
 module.exports = function (self) {
+
+	const ROBOT_OPTION = {
+		id: 'robot',
+		type: 'textinput',
+		label: 'Robot Name',
+		tooltip: "Robot name given in MHC Network Setup (eg: ARC-UHD)",
+		default: "Unknown",
+		regex: Regex.SOMETHING,
+		required: true
+	}
 
 	self.setActionDefinitions({
 		recall_preset: {
@@ -9,22 +20,22 @@ module.exports = function (self) {
 				{
 					id: 'robot',
 					type: 'number',
-					label: 'Robot ID (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
+					label: 'Robot ID',
+					default: 0,
+					min: 0,
+					max: 100,
 				},
 				{
 					id: 'num',
 					type: 'number',
-					label: 'Preset Index (1-100)',
-					default: 1,
-					min: 1,
+					label: 'Preset ID',
+					default: 0,
+					min: 0,
 					max: 100,
 				},
 			],
 			callback: async (event) => {
-				const url = `/v1/robots/${event.options.robot}/preset/${event.options.num-1}`
+				const url = `/v1/robots/${event.options.robot}/preset/${event.options.num}`
 				self.sendCam(url)
 			},
 		},
@@ -34,10 +45,10 @@ module.exports = function (self) {
 				{
 					id: 'robot',
 					type: 'number',
-					label: 'Robot ID (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
+					label: 'Robot ID',
+					default: 0,
+					min: 0,
+					max: 100,
 				},
 				{
 					id: 'num',
@@ -55,18 +66,10 @@ module.exports = function (self) {
 		},
 		stop_robot: {
 			name: 'Stop Robot',
-			options: [
-				{
-					id: 'robot',
-					type: 'number',
-					label: 'Robot ID (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
-				}
-			],
+			options: [ ROBOT_OPTION ],
 			callback: async (event) => {
-				const url = `/v1/robots/${event.options.robot-1}/stop`
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/stop`
 				self.sendCam(url, 'PUT')
 			}
 		},
@@ -77,16 +80,19 @@ module.exports = function (self) {
 			},
 		},
 		set_move_option: {
-			name: 'Set Move Options',
+			name: 'Set Move Option (Deprecated)',
+			callback: async (event) => {
+				const url = `/v1/robots/0/moves/settings`
+				options = {
+					oneClickStart: true
+				}
+				self.sendCam(url, 'PATCH', options)
+			}
+		},
+		set_move_option_v2: {
+			name: 'Set Move Options (V2)',
 			options: [
-				{
-					id: 'robot',
-					type: 'number',
-					label: 'Robot ID (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
-				},
+				ROBOT_OPTION,
 				{
 					type: 'dropdown',
 					label: 'One Click Start',
@@ -109,7 +115,8 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const url = `/v1/robots/${event.options.robot-1}/moves/settings`
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/moves/settings`
 				options = {
 					oneClickStart: event.options.oneClickStart,
 					loop: event.options.oneClickStart
@@ -120,14 +127,7 @@ module.exports = function (self) {
 		enable_robot: {
 			name: 'Robot Enable/Disable',
 			options: [
-				{
-					id: 'robot',
-					type: 'number',
-					label: 'Robot ID (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
-				},
+				ROBOT_OPTION,
 				{
 					type: 'dropdown',
 					label: 'Enabled On/Off',
@@ -140,7 +140,8 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const url = `/v1/robots/${event.options.robot-1}/configuration`
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/configuration`
 				data = {
 					enable: event.options.bol === '1'
 				}
@@ -155,8 +156,8 @@ module.exports = function (self) {
 					label: 'Input Number',
 					id: 'input',
 					choices: [
-						{ id: 0, label: 'Input 1' },
-						{ id: 1, label: 'Input 2' },
+						{ id: 1, label: 'Input 1' },
+						{ id: 2, label: 'Input 2' },
 					],
 					default: '1',
 				},
@@ -172,25 +173,22 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const url = `/v1/devices/3/inputs`
+
+				const idx = await self.getRobotIndex('Pan-Bars (cartoni)', true)
+				const url = `/v1/devices/${idx}/inputs`
+
 				payload = {
-					State: event.options.state === '1',
-					Index: event.options.input
+					index: event.options.input,
+					state: event.options.state === '1'
 				}
+
 				self.sendCam(url, 'PATCH', payload)
 			}
 		},
 		manage_tracking: {
 			name: 'Robot Tracking On/Off',
 			options: [
-				{
-					id: 'robot',
-					type: 'number',
-					label: 'Robot Index (1-15)',
-					default: 1,
-					min: 1,
-					max: 15,
-				},
+				ROBOT_OPTION,
 				{
 					type: 'dropdown',
 					label: 'Enabled On/Off',
@@ -203,13 +201,51 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const url = `/v1/robots/${event.options.robot-1}/tracking`
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/tracking`
 				options = {
 					TrackingEnabled: event.options.state === '1'
 				}
 				self.sendCam(url, 'PATCH', options)
 			}
-		}
-		// add loop parameter to mset move ooptions
+		},
+		recall_preset_v2: {
+			name: 'Recall Preset (V2)',
+			options: [
+				ROBOT_OPTION,
+				{
+					id: 'num',
+					type: 'number',
+					label: 'Preset Index (1-100)',
+					default: 1,
+					min: 1,
+					max: 100,
+				},
+			],
+			callback: async (event) => {
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/preset/${event.options.num-1}`
+				self.sendCam(url)
+			},
+		},
+		recall_move_v2: {
+			name: 'Recall Move (V2)',
+			options: [
+				ROBOT_OPTION,
+				{
+					id: 'num',
+					type: 'number',
+					label: 'Move ID',
+					default: 0,
+					min: 0,
+					max: 100,
+				},
+			],
+			callback: async (event) => {
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/moves/${event.options.num}/begin`
+				self.sendCam(url, 'POST')
+			},
+		},
 	})
 }

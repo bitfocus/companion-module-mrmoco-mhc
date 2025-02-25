@@ -29,11 +29,33 @@ class MHCServerModuleInstance extends InstanceBase {
 		this.config = config
 	}
 
+	getFullPath(str) {
+		return `https://${this.config.httpHost}:${this.config.httpPort}${str}`
+	}
+
+	async getRobotIndex(name, byType=false) {
+		const res =  got(
+			this.getFullPath('/v1/devices'),
+			{
+				https: { rejectUnauthorized: false },
+				username: this.config.username,
+				password: this.config.password,
+			}
+		)
+		const devices = await res.json()
+		const pb = devices.find(a => name.localeCompare(byType ? a.Type : a.Name) == 0)
+		if (!pb)
+			throw new Error(`${name} Not Found! Is the user assigned?`)
+		if (pb.Connected !== true)
+			throw new Error(`${pb.Name} [${pb.Type}] Not Connected`)
+		return pb.ID
+	}
+
 	async sendCam(str, method='PUT', body=null) {
 
 		if (str) {
 
-			const url = `https://${this.config.httpHost}:${this.config.httpPort}${str}`
+			const url = this.getFullPath(str)
 
 			if (this.config.debug) {
 				this.log('debug', `Sending : ${url}`)
