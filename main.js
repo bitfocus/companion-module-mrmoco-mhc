@@ -46,7 +46,7 @@ class MHCServerModuleInstance extends InstanceBase {
 		const pb = devices.find(a => name.localeCompare(byType ? a.Type : a.Name) == 0)
 		if (!pb)
 			throw new Error(`${name} Not Found! Is the user assigned?`)
-		if (pb.Connected !== true)
+		if (pb.Connected !== 'true')
 			throw new Error(`${pb.Name} [${pb.Type}] Not Connected`)
 		return pb.ID
 	}

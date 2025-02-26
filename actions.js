@@ -9,7 +9,7 @@ module.exports = function (self) {
 		label: 'Robot Name',
 		tooltip: "Robot name given in MHC Network Setup (eg: ARC-UHD)",
 		default: "Unknown",
-		regex: Regex.SOMETHING,
+		regex: "/^[A-Za-z].+$/",
 		required: true
 	}
 
