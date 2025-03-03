@@ -80,7 +80,7 @@ module.exports = function (self) {
 			},
 		},
 		set_move_option: {
-			name: 'Set Move Option (Deprecated)',
+			name: 'Set Move Option',
 			callback: async (event) => {
 				const url = `/v1/robots/0/moves/settings`
 				options = {
@@ -115,8 +115,11 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const idx = await self.getRobotIndex(event.options.robot)
-				const url = `/v1/robots/${idx}/moves/settings`
+				var url = '/v1/robots/0/moves/settings'
+				if(event.options.robot) {
+					const idx = await self.getRobotIndex(event.options.robot)
+					url = `/v1/robots/${idx}/moves/settings`
+				}
 				options = {
 					oneClickStart: event.options.oneClickStart,
 					loop: event.options.oneClickStart

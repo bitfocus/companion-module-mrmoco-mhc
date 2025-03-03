@@ -3,7 +3,7 @@
 	"name": "mrmoco-mhc",
 	"shortname": "MHC",
 	"description": "Companion module for MHC compatible devices",
-	"version": "1.0.2",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-mrmoco-mhc.git",
 	"bugs": "https://github.com/bitfocus/companion-module-mrmoco-mhc/issues",
