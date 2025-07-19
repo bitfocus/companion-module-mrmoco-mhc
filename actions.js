@@ -229,7 +229,7 @@ module.exports = function (self) {
 			],
 			callback: async (event) => {
 				const idx = await self.getRobotIndex(event.options.robot)
-				const url = `/v1/robots/${idx}/preset/${event.options.num -1}/tracking`
+				const url = `/v1/robots/${idx}/preset/${event.options.num - 1}/tracking`
 				self.sendCam(url)
 			},
 		},
