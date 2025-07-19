@@ -270,7 +270,7 @@ module.exports = function (self) {
 			callback: async (event) => {
 				const idx = await self.getRobotIndex(event.options.robot)
 				const url = `/v1/robots/${idx}/presetSettings`
-				options = {
+				const options = {
 					movementMode: event.options.mode,
 				}
 				self.sendCam(url, 'PATCH', options)
