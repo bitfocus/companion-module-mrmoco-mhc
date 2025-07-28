@@ -122,7 +122,7 @@ module.exports = function (self) {
 				}
 				options = {
 					oneClickStart: event.options.oneClickStart,
-					loop: event.options.oneClickStart
+					loop: event.options.loop
 				}
 				self.sendCam(url, 'PATCH', options)
 			}
@@ -143,10 +143,12 @@ module.exports = function (self) {
 				}
 			],
 			callback: async (event) => {
-				const idx = await self.getRobotIndex(event.options.robot)
+				const to_enable = event.options.bol === '1'
+				// do not throw disconnected error when enabling
+				const idx = await self.getRobotIndex(event.options.robot, false, !to_enable)
 				const url = `/v1/robots/${idx}/configuration`
 				data = {
-					enable: event.options.bol === '1'
+					enable: to_enable
 				}
 				self.sendCam(url, 'PATCH', data)
 			}
@@ -227,7 +229,7 @@ module.exports = function (self) {
 			],
 			callback: async (event) => {
 				const idx = await self.getRobotIndex(event.options.robot)
-				const url = `/v1/robots/${idx}/preset/${event.options.num-1}`
+				const url = `/v1/robots/${idx}/preset/${event.options.num - 1}/tracking`
 				self.sendCam(url)
 			},
 		},
@@ -238,16 +240,40 @@ module.exports = function (self) {
 				{
 					id: 'num',
 					type: 'number',
-					label: 'Move ID',
-					default: 0,
-					min: 0,
+					label: 'Move ID (1-100)',
+					default: 1,
+					min: 1,
 					max: 100,
 				},
 			],
 			callback: async (event) => {
 				const idx = await self.getRobotIndex(event.options.robot)
-				const url = `/v1/robots/${idx}/moves/${event.options.num}/begin`
+				const url = `/v1/robots/${idx}/moves/${event.options.num - 1}/begin`
 				self.sendCam(url, 'POST')
+			},
+		},
+		set_preset_options: {
+			name: 'Set Preset Options',
+			options: [
+				ROBOT_OPTION,
+				{
+					id: 'mode',
+					type: 'dropdown',
+					label: 'Recall Style',
+					default: "Goto",
+					choices: [
+						{ id: 'Goto', label: 'Goto' },
+						{ id: 'Cut', label: 'Cut' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const idx = await self.getRobotIndex(event.options.robot)
+				const url = `/v1/robots/${idx}/presetSettings`
+				const options = {
+					movementMode: event.options.mode,
+				}
+				self.sendCam(url, 'PATCH', options)
 			},
 		},
 	})
