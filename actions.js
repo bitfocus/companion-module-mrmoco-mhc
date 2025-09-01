@@ -97,21 +97,22 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'One Click Start',
 					id: 'oneClickStart',
+					default: false,
 					choices: [
 						{ id: false, label: 'Off' },
 						{ id: true, label: 'On' },
 					],
-					default: '1',
 				},
 				{
 					type: 'dropdown',
 					label: 'Loop',
 					id: 'loop',
+					default: false,
 					choices: [
 						{ id: false, label: 'Off' },
 						{ id: true, label: 'On' },
 					],
-					default: '1',
+
 				}
 			],
 			callback: async (event) => {
@@ -276,5 +277,23 @@ module.exports = function (self) {
 				self.sendCam(url, 'PATCH', options)
 			},
 		},
+		set_current_head: {
+			name: 'Set Current Head',
+			options: [
+				{
+					id: 'head',
+					type: 'textinput',
+					label: 'Head Name',
+					default: "Robot 1",
+					regex: Regex.ANYTHING,
+				},
+			],
+			callback: async (event) => {
+				const idx = await self.getRobotIndex(event.options.head, false, false)
+				// use of undocumented API
+				const url = `/v1/devices/${idx}`
+				self.sendCam(url, 'PATCH', { Selected: true })
+			}
+		}
 	})
 }
