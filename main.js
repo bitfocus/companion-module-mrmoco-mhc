@@ -1,5 +1,5 @@
 const { InstanceBase, Regex, runEntrypoint, InstanceStatus } = require('@companion-module/base')
-const got = require('got')
+const { default: got } = require('got')
 const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 // const UpdateFeedbacks = require('./feedbacks')
